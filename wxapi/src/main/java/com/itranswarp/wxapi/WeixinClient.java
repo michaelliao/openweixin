@@ -41,7 +41,8 @@ public class WeixinClient {
 
 	static final Map<String, String> CONTENT_TYPE_JSON = MapUtil.createMap("Content-Type", "application/json");
 
-	static final Map<String, String> CONTENT_TYPE_WWW_FORM = MapUtil.createMap("Content-Type", "application/x-www-form-urlencoded");
+	static final Map<String, String> CONTENT_TYPE_WWW_FORM = MapUtil.createMap("Content-Type",
+			"application/x-www-form-urlencoded");
 
 	static final Map<String, String> CONTENT_TYPE_MULTIPART = MapUtil.createMap("Content-Type", "multipart/form-data");
 
@@ -57,7 +58,9 @@ public class WeixinClient {
 		}
 		if (json.contains("\"errcode\"")) {
 			JsonError err = JsonUtil.fromJson(JsonError.class, json);
-			throw new WeixinException(err.errcode, err.errmsg);
+			if (err.errcode != 0) {
+				throw new WeixinException(err.errcode, err.errmsg);
+			}
 		}
 		return JsonUtil.fromJson(clazz, json);
 	}
@@ -75,7 +78,9 @@ public class WeixinClient {
 		}
 		if (json.contains("\"errcode\"")) {
 			JsonError err = JsonUtil.fromJson(JsonError.class, json);
-			throw new WeixinException(err.errcode, err.errmsg);
+			if (err.errcode != 0) {
+				throw new WeixinException(err.errcode, err.errmsg);
+			}
 		}
 		return JsonUtil.fromJson(clazz, json);
 	}

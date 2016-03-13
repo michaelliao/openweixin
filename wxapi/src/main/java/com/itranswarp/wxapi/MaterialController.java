@@ -18,11 +18,10 @@ public class MaterialController extends AbstractController {
 	@Autowired
 	WeixinClient client;
 
-	@RequestMapping(value = "/material/count", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/material/count", method = RequestMethod.GET)
 	MaterialCount count(@RequestParam(value = "accessToken") String accessToken) throws Exception {
 		MaterialCount counts = client.getJson(MaterialCount.class,
 				"/material/get_materialcount?access_token=" + accessToken, null);
-
 		return counts;
 	}
 
