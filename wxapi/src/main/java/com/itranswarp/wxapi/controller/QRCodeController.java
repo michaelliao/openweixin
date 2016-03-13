@@ -12,7 +12,6 @@ import com.itranswarp.wxapi.qrcode.QRCodeTicket;
 import com.itranswarp.wxapi.qrcode.ShortUrl;
 import com.itranswarp.wxapi.qrcode.TempQRCodeTicket;
 import com.itranswarp.wxapi.util.HttpUtil;
-import com.itranswarp.wxapi.util.MapUtil;
 
 @RestController
 public class QRCodeController extends AbstractController {
@@ -41,11 +40,7 @@ public class QRCodeController extends AbstractController {
 	}
 
 	@RequestMapping(value = "/shortUrl", method = RequestMethod.GET)
-	public ShortUrl shortUrl(@RequestParam(value = "accessToken") String accessToken,
-			@RequestParam(value = "url") String url) {
-		ShortUrl su = client.postJson(ShortUrl.class, "/shorturl?access_token=" + HttpUtil.urlEncode(accessToken),
-				MapUtil.createMap("action", "long2short", "long_url", url));
-		su.long_url = url;
-		return su;
+	public ShortUrl shortUrl(@RequestParam(value = "url") String url) {
+		return client.shortUrl(url);
 	}
 }

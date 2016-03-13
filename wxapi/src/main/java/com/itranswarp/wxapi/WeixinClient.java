@@ -27,6 +27,7 @@ import com.itranswarp.wxapi.bean.IpList;
 import com.itranswarp.wxapi.bean.MaterialCount;
 import com.itranswarp.wxapi.exception.WeixinException;
 import com.itranswarp.wxapi.exception.WeixinSecurityException;
+import com.itranswarp.wxapi.qrcode.ShortUrl;
 import com.itranswarp.wxapi.token.AccessToken;
 import com.itranswarp.wxapi.token.AccessTokenCache;
 import com.itranswarp.wxapi.util.HashUtil;
@@ -94,8 +95,6 @@ public class WeixinClient {
 				MapUtil.createMap("appid", appId, "secret", appSecret, "grant_type", "client_credential"));
 	}
 
-	// Weixin API /////////////////////////////////////////////////////////////
-
 	/**
 	 * 验证来自微信服务器的请求是否合法
 	 * 
@@ -122,6 +121,8 @@ public class WeixinClient {
 		}
 	}
 
+	// Weixin API /////////////////////////////////////////////////////////////
+
 	/**
 	 * API: 获取微信服务器IP地址
 	 * 
@@ -139,6 +140,18 @@ public class WeixinClient {
 	public MaterialCount materialCount() {
 		return getJson(MaterialCount.class, "/material/get_materialcount",
 				MapUtil.createMap("access_token", cache.getAccessToken()));
+	}
+
+	/**
+	 * API: 长链接转短链接接口
+	 * 
+	 * @param url
+	 *            The long url.
+	 * @return The ShortUrl object.
+	 */
+	public ShortUrl shortUrl(String url) {
+		return postJson(ShortUrl.class, "/shorturl?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()),
+				MapUtil.createMap("action", "long2short", "long_url", url));
 	}
 
 	public <T> T getJson(Class<T> clazz, String uri, Map<String, String> data) {
