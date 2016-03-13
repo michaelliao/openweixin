@@ -1,4 +1,4 @@
-package com.itranswarp.wxapi;
+package com.itranswarp.wxapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.itranswarp.wxapi.WeixinClient;
 import com.itranswarp.wxapi.qrcode.QRCode;
 import com.itranswarp.wxapi.qrcode.QRCodeTicket;
 import com.itranswarp.wxapi.qrcode.ShortUrl;

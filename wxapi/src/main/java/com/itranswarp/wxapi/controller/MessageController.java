@@ -1,18 +1,16 @@
-package com.itranswarp.wxapi;
+package com.itranswarp.wxapi.controller;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.itranswarp.wxapi.bean.EncryptedMessage;
 import com.itranswarp.wxapi.event.AbstractEvent;
 import com.itranswarp.wxapi.message.Message;
 import com.itranswarp.wxapi.message.Message.MessageBuilder;
@@ -32,19 +30,34 @@ import com.itranswarp.wxapi.util.XmlUtil;
 @Controller
 public class MessageController extends AbstractController {
 
+	/**
+	 * Response echo message.
+	 * 
+	 * @param echoStr
+	 *            Random string sent from weixin.
+	 * @param request
+	 *            The HttpServletRequest object.
+	 * @return The echo string.
+	 */
+	@RequestMapping(value = "/message", method = RequestMethod.GET)
+	@ResponseBody
+	String token(@RequestParam(value = "echostr") String echoStr, HttpServletRequest request) {
+		client.validateSignature(request);
+		return echoStr;
+	}
+
+	/**
+	 * Receive XML messages sent from weixin.
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "/message", method = RequestMethod.POST, consumes = "text/xml", produces = "text/xml;charset=utf-8")
 	@ResponseBody
 	String onMessageReceived(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String xml = null;
-		String data = readAsString(request.getInputStream());
-		String encrypt_type = request.getParameter("encrypt_type");
-		if ("aes".equals(encrypt_type)) {
-			EncryptedMessage encryptedMsg = XmlUtil.fromXml(EncryptedMessage.class, data);
-			log.info(encryptedMsg.Encrypt);
-			xml = decryptMessage(request, encryptedMsg.Encrypt);
-		} else {
-			xml = data;
-		}
+		String xml = client.readXml(request);
 		log.info("weixin >>> " + xml);
 		Message msg = XmlUtil.fromXml(Message.class, xml);
 		MessageBuilder builder = Message.buildMessage(msg.ToUserName, msg.FromUserName);
@@ -119,18 +132,4 @@ public class MessageController extends AbstractController {
 		}
 		return builder.toTextMessage("Cannot handle this event!");
 	}
-
-	String readAsString(ServletInputStream inputStream) throws IOException {
-		byte[] buffer = new byte[1024];
-		ByteArrayOutputStream output = new ByteArrayOutputStream(4096);
-		for (;;) {
-			int n = inputStream.read(buffer);
-			if (n == (-1)) {
-				break;
-			}
-			output.write(buffer, 0, n);
-		}
-		return output.toString("UTF-8");
-	}
-
 }

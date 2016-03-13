@@ -1,10 +1,9 @@
-package com.itranswarp.wxapi;
+package com.itranswarp.wxapi.controller;
 
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,9 +15,6 @@ import com.itranswarp.wxapi.util.JsonUtil;
 
 @Controller
 public class MenuController extends AbstractController {
-
-	@Autowired
-	WeixinClient client;
 
 	@RequestMapping(value = "/createMenu1", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody

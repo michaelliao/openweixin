@@ -1,13 +1,11 @@
-package com.itranswarp.wxapi;
+package com.itranswarp.wxapi.controller;
 
 import java.util.Base64;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.itranswarp.wxapi.bean.MaterialCount;
@@ -15,14 +13,9 @@ import com.itranswarp.wxapi.bean.MaterialCount;
 @RestController
 public class MaterialController extends AbstractController {
 
-	@Autowired
-	WeixinClient client;
-
 	@RequestMapping(value = "/material/count", method = RequestMethod.GET)
-	MaterialCount count(@RequestParam(value = "accessToken") String accessToken) throws Exception {
-		MaterialCount counts = client.getJson(MaterialCount.class,
-				"/material/get_materialcount?access_token=" + accessToken, null);
-		return counts;
+	MaterialCount count() {
+		return client.materialCount();
 	}
 
 	@RequestMapping(value = "/upload/image", method = RequestMethod.POST)
