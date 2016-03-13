@@ -10,7 +10,7 @@ import com.itranswarp.wxapi.bean.IpList;
 public class IpController extends AbstractController {
 
 	@RequestMapping(value = "/ip", method = RequestMethod.GET)
-	IpList getIpList() {
+	public IpList getIpList() {
 		return client.getIpList();
 	}
 }

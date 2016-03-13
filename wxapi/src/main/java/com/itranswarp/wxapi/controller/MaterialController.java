@@ -14,7 +14,7 @@ import com.itranswarp.wxapi.bean.MaterialCount;
 public class MaterialController extends AbstractController {
 
 	@RequestMapping(value = "/material/count", method = RequestMethod.GET)
-	MaterialCount count() {
+	public MaterialCount count() {
 		return client.materialCount();
 	}
 
