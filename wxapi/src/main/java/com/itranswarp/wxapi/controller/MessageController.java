@@ -77,9 +77,15 @@ public class MessageController extends AbstractController {
 		if (msg.isVoiceMessage()) {
 			ReceivedVoiceMessage received = msg.asVoiceMessage();
 			log.debug(received.getClass().getSimpleName());
-			RepliedVoiceMessage reply = builder.toVoiceMessage("ozKzHPBUWAi_wmtjJ0bvGADRw-J6K-o7GgJZfFw7P00");
-			log.info("<<< " + XmlUtil.toXml(reply, "xml"));
-			return XmlUtil.toXml(reply, "xml");
+			if (received.Recognition.isEmpty()) {
+				RepliedVoiceMessage reply = builder.toVoiceMessage("ozKzHPBUWAi_wmtjJ0bvGADRw-J6K-o7GgJZfFw7P00");
+				log.info("<<< " + XmlUtil.toXml(reply, "xml"));
+				return XmlUtil.toXml(reply, "xml");
+			} else {
+				RepliedTextMessage reply = builder.toTextMessage("你说的是“" + received.Recognition + "”吧？");
+				log.info("<<< " + XmlUtil.toXml(reply, "xml"));
+				return XmlUtil.toXml(reply, "xml");
+			}
 		}
 		if (msg.isVideoMessage()) {
 			ReceivedVideoMessage received = msg.asVideoMessage();

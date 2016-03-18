@@ -43,6 +43,7 @@
 		<!-- artifact version -->
 		<c3p0.version>0.9.1.2</c3p0.version>
 		<commons.logging.version>1.1</commons.logging.version>
+		<httpcomponents.version>4.5.2</httpcomponents.version>
 		<jackson.version>2.6.5</jackson.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<javax.mail.version>1.4.7</javax.mail.version>
@@ -61,6 +62,31 @@
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging-api</artifactId>
 			<version>${commons.logging.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-jcl</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${httpcomponents.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>${httpcomponents.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

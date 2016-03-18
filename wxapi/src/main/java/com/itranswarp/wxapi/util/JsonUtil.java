@@ -1,6 +1,7 @@
 package com.itranswarp.wxapi.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,6 +34,16 @@ public class JsonUtil {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		try {
 			return mapper.readValue(s, clazz);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static <T> T fromJson(Class<T> clazz, InputStream input) {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		try {
+			return mapper.readValue(input, clazz);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

@@ -22,14 +22,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.itranswarp.wxapi.bean.IpList;
-import com.itranswarp.wxapi.bean.MaterialCount;
 import com.itranswarp.wxapi.exception.WeixinException;
 import com.itranswarp.wxapi.exception.WeixinSecurityException;
+import com.itranswarp.wxapi.material.ImageList;
+import com.itranswarp.wxapi.material.Material;
+import com.itranswarp.wxapi.material.MaterialCount;
+import com.itranswarp.wxapi.material.VideoList;
+import com.itranswarp.wxapi.material.VoiceList;
+import com.itranswarp.wxapi.menu.AlbumButton;
+import com.itranswarp.wxapi.menu.AlbumOrPhotoButton;
+import com.itranswarp.wxapi.menu.ClickButton;
+import com.itranswarp.wxapi.menu.LocationButton;
+import com.itranswarp.wxapi.menu.MediaButton;
+import com.itranswarp.wxapi.menu.Menu;
+import com.itranswarp.wxapi.menu.PhotoButton;
+import com.itranswarp.wxapi.menu.Rule;
+import com.itranswarp.wxapi.menu.ScanButton;
+import com.itranswarp.wxapi.menu.ScanPushButton;
+import com.itranswarp.wxapi.menu.SubMenu;
+import com.itranswarp.wxapi.menu.ViewButton;
 import com.itranswarp.wxapi.qrcode.ShortUrl;
+import com.itranswarp.wxapi.template.Industry;
+import com.itranswarp.wxapi.template.TemplateList;
 import com.itranswarp.wxapi.token.AccessToken;
 import com.itranswarp.wxapi.token.AccessTokenCache;
+import com.itranswarp.wxapi.user.UserInfo;
+import com.itranswarp.wxapi.user.UserList;
 import com.itranswarp.wxapi.util.HashUtil;
 import com.itranswarp.wxapi.util.HttpUtil;
 import com.itranswarp.wxapi.util.JsonUtil;
@@ -80,17 +103,26 @@ public class WeixinClient {
 
 	// Access token ///////////////////////////////////////////////////////////
 
+	/**
+	 * Get current access token as String.
+	 * 
+	 * @return Access token.
+	 */
+	public String getAccessToken() {
+		return cache.getAccessToken();
+	}
+
 	// refresh access token by timer:
 	@Scheduled(initialDelay = REFRESH_TOKEN_IN_MILLIS, fixedRate = REFRESH_TOKEN_IN_MILLIS)
 	void refreshAccessToken() {
 		log.info("Refresh access token...");
-		AccessToken at = getAccessToken();
+		AccessToken at = getAccessTokenFromWeixin();
 		log.info("Access toekn was successfully refreshed.");
 		cache.setAccessToken(at.access_token, at.expires_in);
 	}
 
 	// get access token from weixin:
-	AccessToken getAccessToken() {
+	AccessToken getAccessTokenFromWeixin() {
 		return getJson(AccessToken.class, "/token",
 				MapUtil.createMap("appid", appId, "secret", appSecret, "grant_type", "client_credential"));
 	}
@@ -133,6 +165,39 @@ public class WeixinClient {
 	}
 
 	/**
+	 * API: 获取素材列表
+	 * 
+	 * @return ImageList object.
+	 */
+	public ImageList materialImageList(int offset, int count) {
+		return postJson(ImageList.class,
+				"/material/batchget_material?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()),
+				MapUtil.createMap("type", Material.TYPE_IMAGE, "offset", offset, "count", count));
+	}
+
+	/**
+	 * API: 获取素材列表
+	 * 
+	 * @return VoiceList object.
+	 */
+	public VoiceList materialVoiceList(int offset, int count) {
+		return postJson(VoiceList.class,
+				"/material/batchget_material?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()),
+				MapUtil.createMap("type", Material.TYPE_VOICE, "offset", offset, "count", count));
+	}
+
+	/**
+	 * API: 获取素材列表
+	 * 
+	 * @return VideoList object.
+	 */
+	public VideoList materialVideoList(int offset, int count) {
+		return postJson(VideoList.class,
+				"/material/batchget_material?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()),
+				MapUtil.createMap("type", Material.TYPE_VIDEO, "offset", offset, "count", count));
+	}
+
+	/**
 	 * API: 获取素材总数
 	 * 
 	 * @return MaterialCount object.
@@ -140,6 +205,37 @@ public class WeixinClient {
 	public MaterialCount materialCount() {
 		return getJson(MaterialCount.class, "/material/get_materialcount",
 				MapUtil.createMap("access_token", cache.getAccessToken()));
+	}
+
+	/**
+	 * API: 获取用户列表
+	 * 
+	 * @return The UserList object.
+	 */
+	public UserList getUsers(String nextOpenId) {
+		return getJson(UserList.class, "/user/get",
+				MapUtil.createMap("access_token", cache.getAccessToken(), "next_openid", nextOpenId));
+	}
+
+	/**
+	 * API: 创建自定义菜单或个性化菜单
+	 * 
+	 * @param menu
+	 *            The Menu object.
+	 */
+	public void createMenu(Menu menu) {
+		String url = menu.matchrule == null ? "/menu/create" : "/menu/addconditional";
+		postJson(Map.class, url + "?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()), menu);
+	}
+
+	/**
+	 * API: 获取用户详细信息
+	 * 
+	 * @return The UserInfo object.
+	 */
+	public UserInfo getUserInfo(String openId) {
+		return getJson(UserInfo.class, "/user/info",
+				MapUtil.createMap("access_token", cache.getAccessToken(), "openid", openId));
 	}
 
 	/**
@@ -152,6 +248,26 @@ public class WeixinClient {
 	public ShortUrl shortUrl(String url) {
 		return postJson(ShortUrl.class, "/shorturl?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()),
 				MapUtil.createMap("action", "long2short", "long_url", url));
+	}
+
+	/**
+	 * API: 获取所有消息模版
+	 * 
+	 * @return The TemplateList object.
+	 */
+	public TemplateList getTemplateList() {
+		return getJson(TemplateList.class,
+				"/template/get_all_private_template?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()), null);
+	}
+
+	public Object setIndustry(Industry industry) {
+		return postJson(Map.class, "/template/get_industry?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()),
+				industry);
+	}
+
+	public Object getIndustry() {
+		return getJson(Map.class, "/template/get_industry?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()),
+				null);
 	}
 
 	public <T> T getJson(Class<T> clazz, String uri, Map<String, String> data) {
