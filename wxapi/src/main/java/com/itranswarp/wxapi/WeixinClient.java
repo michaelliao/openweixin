@@ -22,11 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import com.itranswarp.wxapi.bean.IpList;
 import com.itranswarp.wxapi.exception.WeixinException;
 import com.itranswarp.wxapi.exception.WeixinSecurityException;
 import com.itranswarp.wxapi.material.ImageList;
@@ -34,23 +30,16 @@ import com.itranswarp.wxapi.material.Material;
 import com.itranswarp.wxapi.material.MaterialCount;
 import com.itranswarp.wxapi.material.VideoList;
 import com.itranswarp.wxapi.material.VoiceList;
-import com.itranswarp.wxapi.menu.AlbumButton;
-import com.itranswarp.wxapi.menu.AlbumOrPhotoButton;
-import com.itranswarp.wxapi.menu.ClickButton;
-import com.itranswarp.wxapi.menu.LocationButton;
-import com.itranswarp.wxapi.menu.MediaButton;
 import com.itranswarp.wxapi.menu.Menu;
-import com.itranswarp.wxapi.menu.PhotoButton;
-import com.itranswarp.wxapi.menu.Rule;
-import com.itranswarp.wxapi.menu.ScanButton;
-import com.itranswarp.wxapi.menu.ScanPushButton;
-import com.itranswarp.wxapi.menu.SubMenu;
-import com.itranswarp.wxapi.menu.ViewButton;
+import com.itranswarp.wxapi.qrcode.QRCode;
+import com.itranswarp.wxapi.qrcode.QRCodeTicket;
 import com.itranswarp.wxapi.qrcode.ShortUrl;
+import com.itranswarp.wxapi.qrcode.TempQRCodeTicket;
 import com.itranswarp.wxapi.template.Industry;
 import com.itranswarp.wxapi.template.TemplateList;
 import com.itranswarp.wxapi.token.AccessToken;
 import com.itranswarp.wxapi.token.AccessTokenCache;
+import com.itranswarp.wxapi.token.IpList;
 import com.itranswarp.wxapi.user.UserInfo;
 import com.itranswarp.wxapi.user.UserList;
 import com.itranswarp.wxapi.util.HashUtil;
@@ -248,6 +237,33 @@ public class WeixinClient {
 	public ShortUrl shortUrl(String url) {
 		return postJson(ShortUrl.class, "/shorturl?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()),
 				MapUtil.createMap("action", "long2short", "long_url", url));
+	}
+
+	/**
+	 * API: 创建二维码
+	 * 
+	 * @param sceneId
+	 *            场景ID，范围0~100000
+	 * @param expires
+	 *            过期时间，(秒)，范围0~2592000，0表示不过期。
+	 * @return The QRCode object.
+	 */
+	public QRCode createQRCode(int sceneId, int expires) {
+		if (sceneId < 0 || sceneId > 100000) {
+			throw new IllegalArgumentException("sceneId must be 0 ~ 100000");
+		}
+		if (expires < 0 || expires > 2592000) {
+			throw new IllegalArgumentException("expires must be 0 ~ 2592000");
+		}
+		if (expires == 0) {
+			QRCodeTicket ticket = new QRCodeTicket(sceneId);
+			return postJson(QRCode.class, "/qrcode/create?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()),
+					ticket);
+		} else {
+			TempQRCodeTicket ticket = new TempQRCodeTicket(sceneId, expires);
+			return postJson(QRCode.class, "/qrcode/create?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()),
+					ticket);
+		}
 	}
 
 	/**

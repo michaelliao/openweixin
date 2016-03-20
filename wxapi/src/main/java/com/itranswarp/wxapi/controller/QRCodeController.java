@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.itranswarp.wxapi.WeixinClient;
 import com.itranswarp.wxapi.qrcode.QRCode;
-import com.itranswarp.wxapi.qrcode.QRCodeTicket;
 import com.itranswarp.wxapi.qrcode.ShortUrl;
-import com.itranswarp.wxapi.qrcode.TempQRCodeTicket;
-import com.itranswarp.wxapi.util.HttpUtil;
 
 @RestController
 public class QRCodeController extends AbstractController {
@@ -20,23 +17,9 @@ public class QRCodeController extends AbstractController {
 	WeixinClient client;
 
 	@RequestMapping(value = "/qrcode/createTemp", method = RequestMethod.GET)
-	public QRCode tempQR(@RequestParam(value = "accessToken") String accessToken,
-			@RequestParam(value = "expires", defaultValue = "604800") long expires,
-			@RequestParam(value = "sceneId") int sceneId) {
-		TempQRCodeTicket ticket = new TempQRCodeTicket(sceneId, 3600);
-
-		QRCode code = client.postJson(QRCode.class, "/qrcode/create?access_token=" + HttpUtil.urlEncode(accessToken),
-				ticket);
-		return code;
-	}
-
-	@RequestMapping(value = "/qrcode/create", method = RequestMethod.GET)
-	public QRCode permQR(@RequestParam(value = "accessToken") String accessToken,
-			@RequestParam(value = "sceneId") int sceneId) {
-		QRCodeTicket ticket = new QRCodeTicket(sceneId);
-		QRCode code = client.postJson(QRCode.class, "/qrcode/create?access_token=" + HttpUtil.urlEncode(accessToken),
-				ticket);
-		return code;
+	public QRCode createQR(@RequestParam(value = "sceneId") int sceneId,
+			@RequestParam(value = "expires", defaultValue = "604800") int expires) {
+		return client.createQRCode(sceneId, expires);
 	}
 
 	@RequestMapping(value = "/shortUrl", method = RequestMethod.GET)

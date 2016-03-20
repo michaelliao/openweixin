@@ -1,7 +1,5 @@
 package com.itranswarp.wxapi.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
@@ -13,10 +11,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIUtils;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -64,11 +59,8 @@ public class MaterialController extends AbstractController {
 			HttpPost httpPost = new HttpPost(
 					"https://api.weixin.qq.com/cgi-bin/material/add_material?type=image&access_token="
 							+ HttpUtil.urlEncode(accessToken));
-
-			HttpEntity httpEntity = MultipartEntityBuilder.create()
-					.setMode(HttpMultipartMode.BROWSER_COMPATIBLE).addBinaryBody("media",
-							new File("/Users/michael/Desktop/test.jpg"), ContentType.create("image/jpeg"), "test.jpg")
-					.build();
+			HttpEntity httpEntity = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+					.addBinaryBody("media", imageData, ContentType.create("image/jpeg"), "test.jpg").build();
 			httpPost.setConfig(
 					RequestConfig.custom().setConnectionRequestTimeout(3000).setConnectTimeout(3000).build());
 			httpPost.setEntity(httpEntity);

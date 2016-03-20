@@ -114,6 +114,11 @@ public class Message {
 		return TYPE_EVENT.equals(this.MsgType);
 	}
 
+	/**
+	 * 把消息转换为相应的事件类型
+	 * 
+	 * @return AbstractEvent的子类
+	 */
 	public AbstractEvent asEvent() {
 		if (isEvent()) {
 			switch (this.Event) {
@@ -129,6 +134,11 @@ public class Message {
 		throw new WeixinMessageException("Cannot cast to event from " + this);
 	}
 
+	/**
+	 * 把消息转换为文本消息
+	 * 
+	 * @return ReceivedTextMessage
+	 */
 	public ReceivedTextMessage asTextMessage() {
 		if (isTextMessage()) {
 			return new ReceivedTextMessage(CreateTime, FromUserName, ToUserName, MsgId, Content);
@@ -136,6 +146,11 @@ public class Message {
 		throw new WeixinMessageException("Cannot cast to text message from " + this);
 	}
 
+	/**
+	 * 把消息转换为图片消息
+	 * 
+	 * @return ReceivedImageMessage
+	 */
 	public ReceivedImageMessage asImageMessage() {
 		if (isImageMessage()) {
 			return new ReceivedImageMessage(CreateTime, FromUserName, ToUserName, MsgId, PicUrl, MediaId);
@@ -143,6 +158,11 @@ public class Message {
 		throw new WeixinMessageException("Cannot cast to image message from " + this);
 	}
 
+	/**
+	 * 把消息转换为语音消息
+	 * 
+	 * @return ReceivedVoiceMessage
+	 */
 	public ReceivedVoiceMessage asVoiceMessage() {
 		if (isVoiceMessage()) {
 			return new ReceivedVoiceMessage(CreateTime, FromUserName, ToUserName, MsgId, MediaId, Format, Recognition);
@@ -150,6 +170,11 @@ public class Message {
 		throw new WeixinMessageException("Cannot cast to voice message from " + this);
 	}
 
+	/**
+	 * 把消息转换为视频消息
+	 * 
+	 * @return ReceivedVideoMessage
+	 */
 	public ReceivedVideoMessage asVideoMessage() {
 		if (isVideoMessage()) {
 			return new ReceivedVideoMessage(CreateTime, FromUserName, ToUserName, MsgId, MediaId, ThumbMediaId);
@@ -157,6 +182,11 @@ public class Message {
 		throw new WeixinMessageException("Cannot cast to video message from " + this);
 	}
 
+	/**
+	 * 把消息转换为小视频消息
+	 * 
+	 * @return ReceivedShortVideoMessage
+	 */
 	public ReceivedShortVideoMessage asShortVideoMessage() {
 		if (isShortVideoMessage()) {
 			return new ReceivedShortVideoMessage(CreateTime, FromUserName, ToUserName, MsgId, MediaId, ThumbMediaId);
@@ -164,6 +194,11 @@ public class Message {
 		throw new WeixinMessageException("Cannot cast to short video message from " + this);
 	}
 
+	/**
+	 * 把消息转换为位置消息
+	 * 
+	 * @return ReceivedLocationMessage
+	 */
 	public ReceivedLocationMessage asLocationMessage() {
 		if (isLocationMessage()) {
 			return new ReceivedLocationMessage(CreateTime, FromUserName, ToUserName, MsgId, Label, Location_X,
@@ -172,6 +207,11 @@ public class Message {
 		throw new WeixinMessageException("Cannot cast to location message from " + this);
 	}
 
+	/**
+	 * 把消息转换为链接消息
+	 * 
+	 * @return ReceivedLinkMessage
+	 */
 	public ReceivedLinkMessage asLinkMessage() {
 		if (isLinkMessage()) {
 			return new ReceivedLinkMessage(CreateTime, FromUserName, ToUserName, MsgId, Url, Title, Description);
@@ -179,6 +219,13 @@ public class Message {
 		throw new WeixinMessageException("Cannot cast to link message from " + this);
 	}
 
+	/**
+	 * 创建一个MessageBuilder对象
+	 * 
+	 * @param FromUserName 发送方
+	 * @param ToUserName 接收方
+	 * @return MessageBuilder
+	 */
 	public static MessageBuilder buildMessage(String FromUserName, String ToUserName) {
 		return new MessageBuilder(FromUserName, ToUserName);
 	}

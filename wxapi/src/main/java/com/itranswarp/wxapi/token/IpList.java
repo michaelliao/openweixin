@@ -1,4 +1,4 @@
-package com.itranswarp.wxapi.bean;
+package com.itranswarp.wxapi.token;
 
 public class IpList {
 

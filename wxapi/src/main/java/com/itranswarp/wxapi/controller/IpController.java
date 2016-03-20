@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.itranswarp.wxapi.bean.IpList;
+import com.itranswarp.wxapi.token.IpList;
 
 @RestController
 public class IpController extends AbstractController {
