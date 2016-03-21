@@ -46,13 +46,9 @@
 		<httpcomponents.version>4.5.2</httpcomponents.version>
 		<jackson.version>2.6.5</jackson.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
-		<javax.mail.version>1.4.7</javax.mail.version>
 		<javax.servlet.version>3.1.0</javax.servlet.version>
-		<jetty.version>9.3.2.v20150730</jetty.version>
 		<junit.version>4.12</junit.version>
 		<log4j.version>2.5</log4j.version>
-		<mysql.connector.version>5.1.36</mysql.connector.version>
-		<pebble.version>1.6.0</pebble.version>
 		<spring.version>4.1.7.RELEASE</spring.version>
 		<woodstox.version>4.4.1</woodstox.version>
 	</properties>
@@ -124,37 +120,9 @@
 			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.mitchellbosecke</groupId>
-			<artifactId>pebble-spring3</artifactId>
-			<version>${pebble.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-webmvc</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>${javax.servlet.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-server</artifactId>
-			<version>${jetty.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-webapp</artifactId>
-			<version>${jetty.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

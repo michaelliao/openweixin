@@ -1,4 +1,4 @@
-package com.itranswarp.wxapi.token;
+package com.itranswarp.wxapi.token.cache;
 
 import org.springframework.stereotype.Component;
 
@@ -8,9 +8,9 @@ import com.itranswarp.wxapi.exception.WeixinAccessTokenException;
 public class SimpleAccessTokenCache implements AccessTokenCache {
 
 	/**
-	 * Should refresh in 10 min:
+	 * Should refresh in 30 min:
 	 */
-	static final long SHOULD_REFRESH_IN = 10 * 60 * 1000;
+	static final long SHOULD_REFRESH_IN = 30 * 60 * 1000;
 
 	AccessTokenBean accessTokenBean;
 

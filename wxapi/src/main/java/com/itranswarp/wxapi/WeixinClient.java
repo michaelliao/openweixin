@@ -18,6 +18,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,6 +37,7 @@ import com.itranswarp.wxapi.exception.WeixinSecurityException;
 import com.itranswarp.wxapi.material.ImageList;
 import com.itranswarp.wxapi.material.Material;
 import com.itranswarp.wxapi.material.MaterialCount;
+import com.itranswarp.wxapi.material.UploadedMedia;
 import com.itranswarp.wxapi.material.VideoList;
 import com.itranswarp.wxapi.material.VoiceList;
 import com.itranswarp.wxapi.menu.Menu;
@@ -38,8 +48,8 @@ import com.itranswarp.wxapi.qrcode.TempQRCodeTicket;
 import com.itranswarp.wxapi.template.Industry;
 import com.itranswarp.wxapi.template.TemplateList;
 import com.itranswarp.wxapi.token.AccessToken;
-import com.itranswarp.wxapi.token.AccessTokenCache;
 import com.itranswarp.wxapi.token.IpList;
+import com.itranswarp.wxapi.token.cache.AccessTokenCache;
 import com.itranswarp.wxapi.user.UserInfo;
 import com.itranswarp.wxapi.user.UserList;
 import com.itranswarp.wxapi.util.HashUtil;
@@ -50,6 +60,8 @@ import com.itranswarp.wxapi.util.XmlUtil;
 
 @Component
 public class WeixinClient {
+
+	static final int CONN_TIMEOUT = 2000;
 
 	@Value("${wxapi.app.id}")
 	String appId;
@@ -276,14 +288,48 @@ public class WeixinClient {
 				"/template/get_all_private_template?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()), null);
 	}
 
-	public Object setIndustry(Industry industry) {
-		return postJson(Map.class, "/template/get_industry?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()),
+	/**
+	 * 设置所属行业
+	 * 
+	 * @param industry
+	 *            The Industry object.
+	 */
+	public void setIndustry(Industry industry) {
+		postJson(Map.class, "/template/get_industry?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()),
 				industry);
 	}
 
 	public Object getIndustry() {
 		return getJson(Map.class, "/template/get_industry?access_token=" + HttpUtil.urlEncode(cache.getAccessToken()),
 				null);
+	}
+
+	public UploadedMedia uploadImage(String filename, byte[] imageData) throws Exception {
+		log.debug("will upload image...");
+		String url = "https://api.weixin.qq.com/cgi-bin/material/add_material?type=image&access_token="
+				+ HttpUtil.urlEncode(cache.getAccessToken());
+		try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+			HttpPost httpPost = new HttpPost(url);
+			HttpEntity httpEntity = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+					.addBinaryBody("media", imageData, ContentType.create(filename), filename).build();
+			httpPost.setConfig(RequestConfig.custom().setConnectionRequestTimeout(CONN_TIMEOUT)
+					.setConnectTimeout(CONN_TIMEOUT).setSocketTimeout(CONN_TIMEOUT).build());
+			httpPost.setEntity(httpEntity);
+			log.info(httpPost.getURI());
+			try (CloseableHttpResponse httpResponse = httpclient.execute(httpPost)) {
+				int code = httpResponse.getStatusLine().getStatusCode();
+				if (code != 200) {
+					throw new IOException("Bad http response: " + code);
+				}
+				HttpEntity responseEntity = httpResponse.getEntity();
+				if (responseEntity == null) {
+					throw new IOException("Missing response content.");
+				}
+				try (InputStream jsonInput = responseEntity.getContent()) {
+					return JsonUtil.fromJson(UploadedMedia.class, jsonInput);
+				}
+			}
+		}
 	}
 
 	public <T> T getJson(Class<T> clazz, String uri, Map<String, String> data) {

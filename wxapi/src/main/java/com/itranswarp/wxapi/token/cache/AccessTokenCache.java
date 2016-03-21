@@ -1,4 +1,4 @@
-package com.itranswarp.wxapi.token;
+package com.itranswarp.wxapi.token.cache;
 
 public interface AccessTokenCache {
 
