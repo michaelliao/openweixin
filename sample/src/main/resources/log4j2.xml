@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+	<Properties>
+		<Property name="log.pattern">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}%n%msg%n%n</Property>
+		<Property name="file.all.filename">/srv/webacademy/log/all.log</Property>
+		<Property name="file.all.pattern">/srv/webacademy/log/all.%i.log.gz</Property>
+		<Property name="file.sql.filename">/srv/webacademy/log/sql.log</Property>
+		<Property name="file.sql.pattern">/srv/webacademy/log/sql.%i.log.gz</Property>
+		<Property name="file.err.filename">/srv/webacademy/log/err.log</Property>
+		<Property name="file.err.pattern">/srv/webacademy/log/err.%i.log.gz</Property>
+	</Properties>
+	<Appenders>
+		<Console name="console" target="SYSTEM_OUT">
+			<PatternLayout pattern="${log.pattern}" />
+		</Console>
+		<RollingFile name="all" bufferedIO="true" fileName="${file.all.filename}"
+			filePattern="${file.all.pattern}">
+			<PatternLayout pattern="${log.pattern}" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingFile>
+		<RollingFile name="sql" bufferedIO="true" fileName="${file.sql.filename}"
+			filePattern="${file.sql.pattern}">
+			<PatternLayout pattern="${log.pattern}" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingFile>
+		<RollingFile name="error" bufferedIO="true"
+			fileName="${file.err.filename}" filePattern="${file.err.pattern}">
+			<PatternLayout pattern="${log.pattern}" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Logger name="com.itranswarp" level="debug">
+			<AppenderRef ref="all" />
+		</Logger>
+		<Root level="info">
+			<AppenderRef ref="console" level="info" />
+			<AppenderRef ref="all" level="info" />
+			<AppenderRef ref="err" level="error" />
+		</Root>
+	</Loggers>
+</Configuration>
