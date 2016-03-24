@@ -111,18 +111,21 @@ public class MessageController extends AbstractController {
 		}
 		if (msg.isShortVideoMessage()) {
 			ReceivedShortVideoMessage received = msg.asShortVideoMessage();
+			log.info(received);
 			RepliedTextMessage reply = builder.toTextMessage("小电影我不看！");
 			log.info("<<< " + XmlUtil.toXml(reply, "xml"));
 			return XmlUtil.toXml(reply, "xml");
 		}
 		if (msg.isLocationMessage()) {
 			ReceivedLocationMessage received = msg.asLocationMessage();
+			log.info(received);
 			RepliedTextMessage reply = builder.toTextMessage("你在" + received.Label + "？真不巧，我不住那。");
 			log.info("<<< " + XmlUtil.toXml(reply, "xml"));
 			return XmlUtil.toXml(reply, "xml");
 		}
 		if (msg.isLinkMessage()) {
 			ReceivedLinkMessage received = msg.asLinkMessage();
+			log.info(received);
 			RepliedTextMessage reply = builder.toTextMessage("发链接我不看！");
 			log.info("<<< " + XmlUtil.toXml(reply, "xml"));
 			return XmlUtil.toXml(reply, "xml");
