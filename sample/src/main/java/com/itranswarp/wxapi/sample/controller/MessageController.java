@@ -45,7 +45,7 @@ public class MessageController extends AbstractController {
 	 *            The HttpServletRequest object.
 	 * @return The echo string.
 	 */
-	@RequestMapping(value = "/message", method = RequestMethod.GET)
+	@RequestMapping(value = "/wxapi/message", method = RequestMethod.GET)
 	@ResponseBody
 	String token(@RequestParam(value = "echostr") String echoStr, HttpServletRequest request) {
 		client.validateSignature(request);
@@ -68,7 +68,7 @@ public class MessageController extends AbstractController {
 	 * @return
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "/message", method = RequestMethod.POST, consumes = "text/xml", produces = "text/xml;charset=utf-8")
+	@RequestMapping(value = "/wxapi/message", method = RequestMethod.POST, consumes = "text/xml", produces = "text/xml;charset=utf-8")
 	@ResponseBody
 	String onMessageReceived(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String xml = client.readXml(request);

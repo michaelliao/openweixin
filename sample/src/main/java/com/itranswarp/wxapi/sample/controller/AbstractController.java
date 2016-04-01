@@ -8,7 +8,7 @@ import com.itranswarp.wxapi.WeixinClient;
 
 abstract class AbstractController {
 
-	final Log log = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 
 	@Autowired
 	protected WeixinClient client;

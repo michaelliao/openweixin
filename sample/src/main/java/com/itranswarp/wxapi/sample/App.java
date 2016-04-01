@@ -11,7 +11,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class App {
 
 	public static void main(String[] args) throws Exception {
-		final int port = parsePort(9009, args);
+		final int port = parsePort(2016, args);
 		WebAppContext webapp = new WebAppContext();
 		webapp.setContextPath("/");
 		webapp.setWar("src/main/webapp");
