@@ -1,4 +1,4 @@
-package com.itranswarp.wxapi.controller;
+package com.itranswarp.wxapi.sample.controller;
 
 import java.io.IOException;
 
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.itranswarp.robot.Robot;
-import com.itranswarp.robot.Robot.RobotResponse;
 import com.itranswarp.wxapi.event.AbstractEvent;
 import com.itranswarp.wxapi.message.Message;
 import com.itranswarp.wxapi.message.Message.MessageBuilder;
+import com.itranswarp.wxapi.sample.robot.Robot;
+import com.itranswarp.wxapi.sample.robot.Robot.RobotResponse;
 import com.itranswarp.wxapi.message.ReceivedImageMessage;
 import com.itranswarp.wxapi.message.ReceivedLinkMessage;
 import com.itranswarp.wxapi.message.ReceivedLocationMessage;

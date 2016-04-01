@@ -18,7 +18,19 @@
 		ignore-resource-not-found="true"
 		location="classpath:wxapi.properties, file:/srv/openweixin/wxapi.properties" />
 
-	<context:component-scan base-package="com.itranswarp" />
+	<bean id="weixinClient" class="com.itranswarp.wxapi.WeixinClient"
+		init-method="init">
+		<property name="appId" value="${wxapi.app.id}" />
+		<property name="appSecret" value="${wxapi.app.secret}" />
+		<property name="appToken" value="${wxapi.app.token}" />
+		<property name="aesKey" value="${wxapi.app.aeskey}" />
+		<property name="debug" value="${wxapi.debug:true}" />
+		<property name="cache">
+			<bean class="com.itranswarp.wxapi.token.cache.SimpleAccessTokenCache" />
+		</property>
+	</bean>
+
+	<context:component-scan base-package="com.itranswarp.wxapi.sample" />
 
 	<bean id="pebbleEngine" class="com.mitchellbosecke.pebble.PebbleEngine">
 		<property name="loader">

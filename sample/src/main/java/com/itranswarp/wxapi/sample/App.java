@@ -1,4 +1,4 @@
-package com.itranswarp.wxapi;
+package com.itranswarp.wxapi.sample;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;

@@ -1,4 +1,4 @@
-package com.itranswarp.wxapi.controller;
+package com.itranswarp.wxapi.sample.controller;
 
 import java.util.Base64;
 

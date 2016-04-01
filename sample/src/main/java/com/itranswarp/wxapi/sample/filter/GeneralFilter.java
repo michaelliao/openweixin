@@ -1,4 +1,4 @@
-package com.itranswarp.wxapi;
+package com.itranswarp.wxapi.sample.filter;
 
 import java.io.IOException;
 import java.util.Map;

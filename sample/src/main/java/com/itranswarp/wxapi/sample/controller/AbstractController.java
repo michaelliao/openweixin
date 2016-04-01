@@ -1,4 +1,4 @@
-package com.itranswarp.wxapi.controller;
+package com.itranswarp.wxapi.sample.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

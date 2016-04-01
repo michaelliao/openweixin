@@ -1,4 +1,4 @@
-package com.itranswarp.wxapi.controller;
+package com.itranswarp.wxapi.sample.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

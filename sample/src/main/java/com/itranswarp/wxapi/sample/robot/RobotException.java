@@ -1,4 +1,4 @@
-package com.itranswarp.robot;
+package com.itranswarp.wxapi.sample.robot;
 
 public class RobotException extends RuntimeException {
 
