@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -27,10 +26,6 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import com.itranswarp.wxapi.exception.WeixinException;
 import com.itranswarp.wxapi.exception.WeixinSecurityException;
@@ -58,21 +53,16 @@ import com.itranswarp.wxapi.util.JsonUtil;
 import com.itranswarp.wxapi.util.MapUtil;
 import com.itranswarp.wxapi.util.XmlUtil;
 
-@Component
 public class WeixinClient {
 
 	static final int CONN_TIMEOUT = 2000;
 
-	@Value("${wxapi.app.id}")
 	String appId;
 
-	@Value("${wxapi.app.secret}")
 	String appSecret;
 
-	@Value("${wxapi.app.token}")
 	String appToken;
 
-	@Value("${wxapi.app.aeskey}")
 	String strAesKey;
 
 	byte[] aesKey;
@@ -82,15 +72,36 @@ public class WeixinClient {
 
 	static final String WEIXIN_URL = "https://api.weixin.qq.com/cgi-bin";
 
-	static final long REFRESH_TOKEN_IN_MILLIS = 3600 * 1000L;
+	public static final long REFRESH_TOKEN_IN_MILLIS = 3600 * 1000L;
 
-	@Value("${wxapi.debug:true}")
 	boolean debug;
 
-	@Autowired
 	AccessTokenCache cache;
 
-	@PostConstruct
+	public void setAppId(String appId) {
+		this.appId = appId;
+	}
+
+	public void setAppSecret(String appSecret) {
+		this.appSecret = appSecret;
+	}
+
+	public void setAesKey(String aesKey) {
+		this.strAesKey = aesKey;
+	}
+
+	public void setAppToken(String appToken) {
+		this.appToken = appToken;
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	public void setCache(AccessTokenCache cache) {
+		this.cache = cache;
+	}
+
 	public void init() {
 		// init AES key:
 		if (this.strAesKey == null || this.strAesKey.length() != 43) {
@@ -113,9 +124,7 @@ public class WeixinClient {
 		return cache.getAccessToken();
 	}
 
-	// refresh access token by timer:
-	@Scheduled(initialDelay = REFRESH_TOKEN_IN_MILLIS, fixedRate = REFRESH_TOKEN_IN_MILLIS)
-	void refreshAccessToken() {
+	public void refreshAccessToken() {
 		log.info("Refresh access token...");
 		AccessToken at = getAccessTokenFromWeixin();
 		log.info("Access toekn was successfully refreshed.");

@@ -1,10 +1,7 @@
 package com.itranswarp.wxapi.token.cache;
 
-import org.springframework.stereotype.Component;
-
 import com.itranswarp.wxapi.exception.WeixinAccessTokenException;
 
-@Component
 public class SimpleAccessTokenCache implements AccessTokenCache {
 
 	/**
