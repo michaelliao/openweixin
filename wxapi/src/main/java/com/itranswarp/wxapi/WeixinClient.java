@@ -53,6 +53,11 @@ import com.itranswarp.wxapi.util.JsonUtil;
 import com.itranswarp.wxapi.util.MapUtil;
 import com.itranswarp.wxapi.util.XmlUtil;
 
+/**
+ * Interface for weixin API.
+ * 
+ * @author michael
+ */
 public class WeixinClient {
 
 	static final int CONN_TIMEOUT = 2000;
@@ -62,8 +67,6 @@ public class WeixinClient {
 	String appSecret;
 
 	String appToken;
-
-	String strAesKey;
 
 	byte[] aesKey;
 	byte[] ivParamSpec;
@@ -87,7 +90,12 @@ public class WeixinClient {
 	}
 
 	public void setAesKey(String aesKey) {
-		this.strAesKey = aesKey;
+		// init AES key:
+		if (aesKey == null || aesKey.length() != 43) {
+			throw new IllegalArgumentException("Invalid property: weixin.app.aeskey");
+		}
+		this.aesKey = Base64.getDecoder().decode(aesKey);
+		ivParamSpec = Arrays.copyOfRange(this.aesKey, 0, 16);
 	}
 
 	public void setAppToken(String appToken) {
@@ -100,17 +108,6 @@ public class WeixinClient {
 
 	public void setCache(AccessTokenCache cache) {
 		this.cache = cache;
-	}
-
-	public void init() {
-		// init AES key:
-		if (this.strAesKey == null || this.strAesKey.length() != 43) {
-			throw new IllegalArgumentException("Invalid property: weixin.app.aeskey");
-		}
-		aesKey = Base64.getDecoder().decode(strAesKey);
-		ivParamSpec = Arrays.copyOfRange(aesKey, 0, 16);
-		// get access token immediately:
-		refreshAccessToken();
 	}
 
 	// Access token ///////////////////////////////////////////////////////////
@@ -382,31 +379,6 @@ public class WeixinClient {
 			}
 		}
 		return JsonUtil.fromJson(clazz, json);
-	}
-
-	public <T> T postForm(Class<T> clazz, String uri, Map<String, Object> params) {
-		InputStream data = encodeFormData(params);
-		String json;
-		try {
-			json = HttpUtil.httpPost(WEIXIN_URL + uri, data, null);
-		} catch (IOException e) {
-			throw new WeixinException(e);
-		}
-		if (debug) {
-			log.info("Weixin >>> " + json);
-		}
-		if (json.contains("\"errcode\"")) {
-			JsonError err = JsonUtil.fromJson(JsonError.class, json);
-			if (err.errcode != 0) {
-				throw new WeixinException(err.errcode, err.errmsg);
-			}
-		}
-		return JsonUtil.fromJson(clazz, json);
-	}
-
-	InputStream encodeFormData(Map<String, Object> params) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	// AES decryption /////////////////////////////////////////////////////////
