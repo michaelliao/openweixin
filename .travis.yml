@@ -1,0 +1,8 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+install: cd wxapi && mvn install -DskipTests=true -Dgpg.skip=true
+script: cd wxapi && mvn test
+
