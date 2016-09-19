@@ -3,6 +3,7 @@ package com.itranswarp.wxapi.sample.robot;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Key;
+import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.Map;
 
@@ -23,7 +24,8 @@ public class Robot {
 
 	static final String TULING_URL = "http://www.tuling123.com/openapi/api";
 
-	static final Map<String, String> HEADERS = MapUtil.createMap("Content-Type", "application/json");
+	static final Map<String, String> HEADERS = MapUtil.createMap("Content-Type", "application/json", "Authorization",
+			"token");
 
 	@Value("${robot.app.key}")
 	String apiKey;
@@ -36,15 +38,16 @@ public class Robot {
 	}
 
 	public RobotResponse talk(String userId, String text, String location) throws Exception {
-		Map<String, String> params = MapUtil.createMap("userid", userId, "info", text);
+		System.out.println("Key: " + apiKey + ", Secret: " + apiSecret);
+		Map<String, String> params = MapUtil.createMap("key", apiKey, "userid", HashUtil.md5(userId), "info", text);
 		if (location != null && !location.isEmpty()) {
 			params.put("loc", location);
 		}
-		long timestamp = System.currentTimeMillis();
+		String timestamp = String.valueOf(System.currentTimeMillis());
 		String jsonData = JsonUtil.toJson(params);
 		String aesKey = HashUtil.md5(apiSecret + timestamp + apiKey);
 		String encryptedData = aesEncrypt(aesKey, jsonData);
-		Map<String, Object> postData = MapUtil.createMap("key", apiKey, "timestamp", timestamp, "data", encryptedData);
+		Map<String, String> postData = MapUtil.createMap("key", apiKey, "timestamp", timestamp, "data", encryptedData);
 		String json = HttpUtil.httpPost(TULING_URL, JsonUtil.toJson(postData), HEADERS);
 		RobotResponse resp = JsonUtil.fromJson(RobotResponse.class, json);
 		if (resp.code >= 40000 && resp.code <= 49999) {
@@ -54,12 +57,19 @@ public class Robot {
 	}
 
 	String aesEncrypt(String aesKey, String data) throws GeneralSecurityException {
-		Key key = new SecretKeySpec(aesKey.getBytes(), "AES");
+		Key key = new SecretKeySpec(getHash(aesKey), "AES");
 		IvParameterSpec iv = new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		cipher.init(Cipher.ENCRYPT_MODE, key, iv);
 		byte[] encryptData = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
 		return Base64.getEncoder().encodeToString(encryptData);
+	}
+
+	byte[] getHash(String s) throws GeneralSecurityException {
+		byte[] data = s.getBytes(StandardCharsets.UTF_8);
+		MessageDigest digest = MessageDigest.getInstance("MD5");
+		digest.update(data);
+		return digest.digest();
 	}
 
 	public static class RobotResponse {

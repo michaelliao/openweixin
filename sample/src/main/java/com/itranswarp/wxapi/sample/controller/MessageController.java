@@ -17,6 +17,7 @@ import com.itranswarp.wxapi.message.Message;
 import com.itranswarp.wxapi.message.Message.MessageBuilder;
 import com.itranswarp.wxapi.sample.robot.Robot;
 import com.itranswarp.wxapi.sample.robot.Robot.RobotResponse;
+import com.itranswarp.wxapi.sample.robot.RobotException;
 import com.itranswarp.wxapi.message.ReceivedImageMessage;
 import com.itranswarp.wxapi.message.ReceivedLinkMessage;
 import com.itranswarp.wxapi.message.ReceivedLocationMessage;
@@ -53,11 +54,15 @@ public class MessageController extends AbstractController {
 	}
 
 	String talk(String userId, String text) throws Exception {
-		RobotResponse resp = robot.talk(userId, text);
-		if (resp.code == RobotResponse.CODE_TEXT) {
-			return resp.text;
+		try {
+			RobotResponse resp = robot.talk(userId, text);
+			if (resp.code == RobotResponse.CODE_TEXT) {
+				return resp.text;
+			}
+		} catch (RobotException e) {
+			log.warn("RobotException: " + e.getCode(), e);
 		}
-		return "听不懂你在说什么 :(";
+		return "亲，听不懂你在说什么 :(";
 	}
 
 	/**
