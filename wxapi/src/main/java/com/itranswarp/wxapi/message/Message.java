@@ -128,8 +128,9 @@ public class Message {
 				return new UnsubscribeEvent(CreateTime, FromUserName, ToUserName, Event, EventKey, Ticket);
 			case AbstractEvent.EVENT_SCAN:
 				return new ScanEvent(CreateTime, FromUserName, ToUserName, Event, EventKey, Ticket);
+			default:
+				throw new WeixinMessageException("Cannot handle new type of event from " + this);
 			}
-			throw new WeixinMessageException("Cannot handle new type of event from " + this);
 		}
 		throw new WeixinMessageException("Cannot cast to event from " + this);
 	}
@@ -222,8 +223,10 @@ public class Message {
 	/**
 	 * 创建一个MessageBuilder对象
 	 * 
-	 * @param FromUserName 发送方
-	 * @param ToUserName 接收方
+	 * @param FromUserName
+	 *            发送方
+	 * @param ToUserName
+	 *            接收方
 	 * @return MessageBuilder
 	 */
 	public static MessageBuilder buildMessage(String FromUserName, String ToUserName) {

@@ -151,8 +151,9 @@ public class MessageController extends AbstractController {
 			// cannot send message to unsubscribe user:
 			log.warn("User lost: " + event.FromUserName);
 			return null;
+		default:
+			return builder.toTextMessage("Cannot handle this event!");
 		}
-		return builder.toTextMessage("Cannot handle this event!");
 	}
 
 	String getWelcome() {
