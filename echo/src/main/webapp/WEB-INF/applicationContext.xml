@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<context:property-placeholder
+		ignore-resource-not-found="true"
+		location="classpath:wxapi.properties, file:/srv/openweixin/wxapi.properties" />
+
+	<bean id="weixinClient" class="com.itranswarp.wxapi.WeixinClient"
+		init-method="init">
+		<property name="appId" value="${wxapi.app.id}" />
+		<property name="appSecret" value="${wxapi.app.secret}" />
+		<property name="appToken" value="${wxapi.app.token}" />
+		<property name="aesKey" value="${wxapi.app.aeskey}" />
+		<property name="debug" value="${wxapi.debug:true}" />
+		<property name="cache">
+			<bean class="com.itranswarp.wxapi.token.cache.SimpleAccessTokenCache" />
+		</property>
+	</bean>
+
+	<context:component-scan base-package="com.itranswarp.wxapi.sample" />
+
+	<bean id="pebbleEngine" class="com.mitchellbosecke.pebble.PebbleEngine">
+		<property name="loader">
+			<bean class="com.mitchellbosecke.pebble.spring.PebbleTemplateLoader">
+				<property name="charset" value="utf-8" />
+			</bean>
+		</property>
+		<property name="templateCache">
+			<null />
+		</property>
+	</bean>
+
+	<bean id="viewResolver" class="com.mitchellbosecke.pebble.spring.PebbleViewResolver">
+		<property name="prefix" value="/WEB-INF/templates/" />
+		<property name="suffix" value="" />
+		<property name="pebbleEngine" ref="pebbleEngine" />
+	</bean>
+
+	<mvc:annotation-driven />
+
+	<mvc:resources mapping="/static/**" location="/static/" />
+
+</beans>
