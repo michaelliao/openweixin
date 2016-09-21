@@ -139,10 +139,6 @@ public class MessageController extends AbstractController {
 	}
 
 	String getWelcome() {
-		int n = (int) (Math.random() * 100000) % WELCOMES.length;
-		String s = WELCOMES[n];
-		return s + "我是诗诗姑娘，欢迎关注我！";
+		return "你好，欢迎关注我！";
 	}
-
-	static String[] WELCOMES = { "夜发清溪向三峡，思君不见下渝州。", "日日思君不见君，共饮长江水。", "花径不曾缘客扫，蓬门今始为君开。" };
 }
