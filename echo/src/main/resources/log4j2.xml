@@ -2,12 +2,12 @@
 <Configuration status="WARN">
 	<Properties>
 		<Property name="log.pattern">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}%n%msg%n%n</Property>
-		<Property name="file.all.filename">/srv/webacademy/log/all.log</Property>
-		<Property name="file.all.pattern">/srv/webacademy/log/all.%i.log.gz</Property>
-		<Property name="file.sql.filename">/srv/webacademy/log/sql.log</Property>
-		<Property name="file.sql.pattern">/srv/webacademy/log/sql.%i.log.gz</Property>
-		<Property name="file.err.filename">/srv/webacademy/log/err.log</Property>
-		<Property name="file.err.pattern">/srv/webacademy/log/err.%i.log.gz</Property>
+		<Property name="file.all.filename">/var/log/weixin/all.log</Property>
+		<Property name="file.all.pattern">/var/log/weixin/all.%i.log.gz</Property>
+		<Property name="file.sql.filename">/var/log/weixin/sql.log</Property>
+		<Property name="file.sql.pattern">/var/log/weixin/sql.%i.log.gz</Property>
+		<Property name="file.err.filename">/var/log/weixin/err.log</Property>
+		<Property name="file.err.pattern">/var/log/weixin/err.%i.log.gz</Property>
 	</Properties>
 	<Appenders>
 		<Console name="console" target="SYSTEM_OUT">
